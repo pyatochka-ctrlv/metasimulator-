@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = Number(process.env.E2E_PORT ?? 3100);
+/** E2E_STATIC=1 — тестувати статичну збірку з out/ (як на GitHub Pages) замість `next start`. */
+const STATIC = process.env.E2E_STATIC === "1";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -18,9 +20,10 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /responsive\.spec\.ts/ },
   ],
   webServer: {
-    command: `npx next start -p ${PORT}`,
+    command: STATIC ? `python3 -m http.server ${PORT} --bind 127.0.0.1 --directory out` : `npx next start -p ${PORT}`,
     url: `http://127.0.0.1:${PORT}`,
     reuseExistingServer: true,
+    stderr: STATIC ? "ignore" : "pipe",
     timeout: 120_000,
   },
 });

@@ -302,7 +302,7 @@ export function MissionDetail({ missionId }: { missionId: string }) {
           <>
             {current?.status === "submitted" && (
               <Button variant="outline" size="sm" asChild>
-                <Link href={`/portfolio/${current.id}`}>
+                <Link href={`/portfolio/case?id=${current.id}`}>
                   <BriefcaseBusiness /> Кейс у портфоліо
                 </Link>
               </Button>

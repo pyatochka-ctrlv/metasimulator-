@@ -90,6 +90,7 @@ test("mission: start, answer, submit and see the assessment", async ({ page }) =
   await expect(page.getByText("Skill Score / 100")).toBeVisible();
   await expect(page.getByRole("link", { name: /Кейс у портфоліо/ })).toBeVisible();
   await page.getByRole("link", { name: /Кейс у портфоліо/ }).click();
+  await expect(page).toHaveURL(/\/portfolio\/case\/?\?id=/);
   await expect(page.getByText(/результати отримано в симуляторі/i).first()).toBeVisible();
 });
 

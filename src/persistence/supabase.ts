@@ -33,7 +33,7 @@ export async function getCurrentUser(): Promise<User | null> {
 export async function sendMagicLink(email: string): Promise<void> {
   const sb = getSupabase();
   if (!sb) throw new Error("Supabase не налаштовано");
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: `${window.location.origin}/settings` } });
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/settings` } });
   if (error) throw error;
 }
 

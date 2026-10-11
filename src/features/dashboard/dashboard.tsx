@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { ArrowRight, CheckCircle2, Circle, GraduationCap, ListChecks, Megaphone, Plus, Target, TriangleAlert } from "lucide-react";
 import { useAppStore, type AppData } from "@/store/app-store";
@@ -24,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { tasksForDay, todayKey } from "./daily-tasks";
 
 export function Dashboard() {
+  const router = useRouter();
   const state = useAppStore();
   const level = useLevel();
   const today = todayKey();
@@ -201,7 +203,7 @@ export function Dashboard() {
                             className="block max-w-full truncate text-left font-medium text-primary hover:underline"
                             onClick={() => {
                               state.setActiveAccount(a.id);
-                              window.location.href = `/ads-manager?highlight=${c.id}`;
+                              router.push(`/ads-manager?highlight=${c.id}`);
                             }}
                           >
                             {c.name}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -241,7 +242,7 @@ export function AdSetForm({
           {needsEvent && !isApp && values.optimizationEvent && captureModel(account, values.optimizationEvent as PixelEvent).capture === 0 && (
             <p className="flex items-start gap-1.5 rounded-md bg-warning/10 px-3 py-2 text-xs">
               <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
-              Подія {values.optimizationEvent} не надходить у датасет {account.tracking.pixel.id}. Перевірте <a className="text-primary underline" href="/events-manager">Events Manager</a>.
+              Подія {values.optimizationEvent} не надходить у датасет {account.tracking.pixel.id}. Перевірте <Link className="text-primary underline" href="/events-manager">Events Manager</Link>.
             </p>
           )}
           {(location === "website" || location === "website_and_app") && (

@@ -177,10 +177,10 @@ Error Lab працює так само, але акаунт кейсу одра�
 | `/error-lab`, `/error-lab/[caseId]` | Кейси для діагностики |
 | `/knowledge`, `/knowledge/[slug]` | База знань, реєстр функцій |
 | `/learning` | Шлях навчання за рівнями |
-| `/portfolio`, `/portfolio/[attemptId]` | Кейси, друк / PDF, Markdown, JSON |
+| `/portfolio`, `/portfolio/case?id=<attemptId>` | Кейси, друк / PDF, Markdown, JSON |
 | `/settings` | Профіль, тема, акаунти, експорт / імпорт, Supabase |
 
-Статичні маршрути з параметрами (`missions/[missionId]`, `knowledge/[slug]`, `error-lab/[caseId]`) генеруються через `generateStaticParams`.
+Маршрути з параметрами (`missions/[missionId]`, `knowledge/[slug]`, `error-lab/[caseId]`) генеруються під час збірки через `generateStaticParams`. Кейс портфоліо відкривається через query-параметр, бо ID спроб відомі лише в браузері. Тому весь сайт можна зібрати як статичний (див. README → «Деплой»).
 
 ### Компоненти
 

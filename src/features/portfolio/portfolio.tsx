@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 import { Download, FileText, FlaskConical, Printer } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
@@ -43,7 +44,7 @@ export function PortfolioIndex() {
               const m = getMission(a.missionId);
               return (
                 <li key={a.id}>
-                  <Link href={`/portfolio/${a.id}`} className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4 hover:border-primary/40 hover:bg-accent/30">
+                  <Link href={`/portfolio/case?id=${a.id}`} className="flex h-full flex-col gap-2 rounded-lg border bg-card p-4 hover:border-primary/40 hover:bg-accent/30">
                     <span className="flex items-center justify-between">
                       <span className="text-2xs font-semibold uppercase tracking-wide text-muted-foreground">Місія {m?.number}</span>
                       <Badge variant={(a.assessment?.total ?? 0) >= PASS_SCORE ? "success" : "warning"}>{a.assessment?.total ?? "—"}/100</Badge>
@@ -110,6 +111,12 @@ function download(name: string, content: string, type: string) {
   link.download = name;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+/** Кейс за ?id=… (query-параметр замість динамічного сегмента — сумісно зі статичним хостингом). */
+export function CaseFromQuery() {
+  const id = useSearchParams().get("id") ?? "";
+  return <CaseView attemptId={id} />;
 }
 
 export function CaseView({ attemptId }: { attemptId: string }) {

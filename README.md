@@ -37,10 +37,10 @@ npm run typecheck    # TypeScript
 npm run lint         # ESLint (next lint)
 npm test             # 95 unit + інтеграційних тестів (Vitest)
 npm run build        # production-збірка
-PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers npm run test:e2e   # 14 e2e-тестів (потрібна збірка)
+npm run test:e2e     # 14 e2e-тестів (потрібна збірка: npm run build)
 ```
 
-E2E-тести запускають `next start` на порту 3100. Якщо браузери Playwright встановлено в іншому місці, задайте `PLAYWRIGHT_BROWSERS_PATH` або `PW_CHROMIUM_PATH`.
+E2E-тести запускають `next start` на порту 3100. З `E2E_STATIC=1` вони перевіряють статичну збірку з `out/` (потрібен `python3`). Якщо браузери Playwright встановлено нестандартно, задайте `PLAYWRIGHT_BROWSERS_PATH` або `PW_CHROMIUM_PATH`.
 
 ### Опційно: Supabase
 
@@ -49,6 +49,34 @@ E2E-тести запускають `next start` на порту 3100. Якщо 
 3. У Settings з'явиться вхід через magic link і кнопки «Зберегти в хмару» / «Завантажити з хмари».
 
 Інтеграцію написано за документацією `@supabase/supabase-js`, але з живим проєктом Supabase її не перевіряли. Без змінних середовища застосунок працює в повністю локальному режимі.
+
+## Деплой
+
+Застосунок не потребує сервера: увесь прогрес зберігається в браузері. Тому його можна зібрати як статичний сайт.
+
+```bash
+STATIC_EXPORT=1 npm run build                         # статичний сайт у out/
+STATIC_EXPORT=1 BASE_PATH=/metasimulator- npm run build   # якщо сайт відкривається з підпапки
+```
+
+### GitHub Pages (налаштовано в репозиторії)
+
+1. **Settings → Pages → Build and deployment → Source: GitHub Actions.**
+2. Злийте зміни в `main`. Workflow `.github/workflows/deploy-pages.yml` прожене unit-тести, збере статичний сайт і опублікує його на `https://<user>.github.io/<repo>/`. Повторно запустити деплой можна вручну: **Actions → Deploy to GitHub Pages → Run workflow**.
+3. Власний домен: **Settings → Pages → Custom domain**. Базовий шлях підставиться автоматично.
+
+Workflow `.github/workflows/ci.yml` на кожен push запускає typecheck, lint, unit-тести й e2e-тести проти статичної збірки.
+
+> Прогрес у `localStorage` прив'язаний до домену. Якщо змінити адресу сайту, студентам доведеться перенести прогрес через Settings → Експорт / Імпорт. Тому оберіть остаточну адресу до запуску.
+
+### Vercel або власний сервер
+
+Vercel визначає Next.js автоматично: імпортуйте репозиторій, Node 20+. Для власного сервера: `npm ci && npm run build && npm start`.
+
+### Supabase на продакшні
+
+- `NEXT_PUBLIC_SUPABASE_URL` і `NEXT_PUBLIC_SUPABASE_ANON_KEY` вбудовуються під час збірки. Для GitHub Pages додайте їх у **Settings → Secrets and variables → Actions → Variables** і перезапустіть деплой.
+- У Supabase: **Authentication → URL Configuration** — додайте адресу сайту (разом із базовим шляхом) у Site URL і Redirect URLs, інакше посилання для входу вестиме не туди.
 
 ## Стек
 
