@@ -14,31 +14,35 @@ export interface ReviewFinding {
   articleSlug: string;
 }
 
+/** Межі слова для кирилиці: \b і \w у JS працюють лише з ASCII, тому використовуємо Unicode-класи. */
+const L = "\\p{L}";
+const word = (body: string) => new RegExp(`(?<![${L}])(?:${body})`, "iu");
+
 const RULES: { code: string; test: RegExp; message: string; articleSlug: string }[] = [
   {
     code: "unrealistic_claims",
-    test: /(гарант\w*\s+(дохід|заробіт|результат|працевлаштуван|прибут))|(100\s?%\s*(результат|гарант))|(заробиш|заробляй)\s+\$?\d+/i,
+    test: word(`гарант[${L}]*\\s+(?:дохід|доход|заробіт|результат|працевлаштуван|прибут|роботу)|100\\s?%\\s*(?:результат|гарант)|(?:заробиш|заробляй|заробіть)\\s+\\$?\\d+`),
     message: "Нереалістичні або оманливі обіцянки результату (дохід, гарантоване працевлаштування).",
     articleSlug: "advertising-standards",
   },
   {
     code: "personal_attributes",
-    test: /\b(ти|ви)\s+(страждаєш|страждаєте|маєш борги|маєте борги|маєш зайву|маєте зайву|самотн\w+|в депресії)\b|\bваша (вага|депресія|хвороба)\b/i,
+    test: word(`(?:ти|ви)\\s+(?:страждаєш|страждаєте|маєш борги|маєте борги|маєш зайву|маєте зайву|самотн[${L}]*|в депресії)|ваша\\s+(?:вага|депресія|хвороба)`),
     message: "Звернення до персональних атрибутів (здоров'я, фінансовий стан, вага тощо) у формі «Ви …».",
     articleSlug: "advertising-standards",
   },
   {
     code: "before_after",
-    test: /(до\s*(і|та)\s*після).*(схуд|кг)|мінус\s*\d+\s*кг/i,
+    test: word(`до\\s*(?:і|та)\\s*після[\\s\\S]*(?:схуд|кг)|мінус\\s*\\d+\\s*кг`),
     message: "Порівняння «до/після» або обіцянки щодо схуднення — обмежена категорія.",
     articleSlug: "advertising-standards",
   },
 ];
 
 const SPECIAL_HINTS: { category: Campaign["specialAdCategories"][number]; test: RegExp }[] = [
-  { category: "financial_products_services", test: /кредит|позик|розстрочк|кредитн\w+ карт|страхуванн|інвестиційн\w+ рахун/i },
-  { category: "employment", test: /ваканс|шукаємо співробітник|працевлаштуван|робота для|зарплата від/i },
-  { category: "housing", test: /оренд\w+ квартир|продаж квартир|іпотек|новобудов/i },
+  { category: "financial_products_services", test: word(`кредит|позик|розстрочк|кредитн[${L}]* карт|страхуванн|інвестиційн[${L}]* рахун`) },
+  { category: "employment", test: word(`ваканс|шукаємо співробітник|робота для|зарплата від`) },
+  { category: "housing", test: word(`оренд[${L}]* квартир|продаж квартир|іпотек|новобудов`) },
 ];
 
 export function reviewAd(ad: Ad, adSet: AdSet, campaign: Campaign, account: AdAccount): ReviewFinding[] {
@@ -119,7 +123,7 @@ export function reviewAd(ad: Ad, adSet: AdSet, campaign: Campaign, account: AdAc
     });
   }
 
-  if (/!!!|[A-ZА-ЯІЇЄҐ]{12,}/.test(text)) {
+  if (/!!!|[A-ZА-ЯІЇЄҐ]{12,}/u.test(text)) {
     findings.push({ code: "low_quality_text", severity: "info", message: "Надмірні великі літери чи знаки оклику знижують якість оголошення.", articleSlug: "creative-strategy" });
   }
 
