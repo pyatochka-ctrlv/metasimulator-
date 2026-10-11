@@ -184,9 +184,9 @@ export function Dashboard() {
               <table className="data-table w-full text-xs">
                 <thead>
                   <tr>
-                    <th>Кампанія</th>
-                    <th>Статус</th>
-                    <th className="text-right">Spend</th>
+                    <th scope="col">Кампанія</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col" className="text-right">Spend</th>
                   </tr>
                 </thead>
                 <tbody>

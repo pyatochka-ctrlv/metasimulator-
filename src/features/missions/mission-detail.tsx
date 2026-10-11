@@ -366,7 +366,7 @@ export function MissionDetail({ missionId }: { missionId: string }) {
               {mission.recommendedArticles.map((s) => (
                 <li key={s}>
                   <Link href={`/knowledge/${s}`} className="inline-flex items-center gap-1 text-primary hover:underline">
-                    <ArrowRight className="h-3 w-3" /> {s}
+                    <ArrowRight className="h-3 w-3" /> {getArticle(s)?.title ?? s}
                   </Link>
                 </li>
               ))}

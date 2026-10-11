@@ -89,13 +89,13 @@ export function MissionCenter() {
             <table className="data-table w-full min-w-[760px] text-[13px]">
               <thead>
                 <tr>
-                  <th className="w-10">№</th>
-                  <th>Місія</th>
-                  <th>Рівень</th>
-                  <th>Тип</th>
-                  <th>Час</th>
-                  <th>Найкращий бал</th>
-                  <th />
+                  <th scope="col" className="w-10">№</th>
+                  <th scope="col">Місія</th>
+                  <th scope="col">Рівень</th>
+                  <th scope="col">Тип</th>
+                  <th scope="col">Час</th>
+                  <th scope="col">Найкращий бал</th>
+                  <th scope="col" />
                 </tr>
               </thead>
               <tbody>

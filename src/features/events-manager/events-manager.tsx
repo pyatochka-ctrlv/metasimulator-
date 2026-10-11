@@ -175,13 +175,13 @@ export function EventsManager() {
               <table className="data-table w-full text-xs">
                 <thead>
                   <tr>
-                    <th>Подія</th>
-                    <th className="text-right">Реальні дії (бекенд)</th>
-                    <th className="text-right">Браузер</th>
-                    <th className="text-right">Сервер</th>
-                    <th className="text-right">Отримано після дедуплікації</th>
-                    <th className="text-right">Покриття</th>
-                    <th>Стан</th>
+                    <th scope="col">Подія</th>
+                    <th scope="col" className="text-right">Реальні дії (бекенд)</th>
+                    <th scope="col" className="text-right">Браузер</th>
+                    <th scope="col" className="text-right">Сервер</th>
+                    <th scope="col" className="text-right">Отримано після дедуплікації</th>
+                    <th scope="col" className="text-right">Покриття</th>
+                    <th scope="col">Стан</th>
                   </tr>
                 </thead>
                 <tbody>

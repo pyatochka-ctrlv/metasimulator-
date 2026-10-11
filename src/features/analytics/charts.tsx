@@ -95,7 +95,7 @@ export function SimpleTable({ columns, rows }: { columns: string[]; rows: (strin
       <thead>
         <tr>
           {columns.map((c, i) => (
-            <th key={c} className={i > 0 ? "text-right" : undefined}>
+            <th key={c} scope="col" className={i > 0 ? "text-right" : undefined}>
               {c}
             </th>
           ))}

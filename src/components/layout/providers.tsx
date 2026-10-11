@@ -49,7 +49,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <StoreHydrator />
       <ThemeSync />
       {children}
-      <Toaster position="bottom-right" richColors closeButton toastOptions={{ className: "text-[13px]" }} />
+      <Toaster position="top-center" offset={60} richColors closeButton toastOptions={{ className: "text-[13px]" }} />
     </TooltipProvider>
   );
 }

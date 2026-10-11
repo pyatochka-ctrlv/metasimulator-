@@ -86,7 +86,7 @@ function SortableTable({ columns, rows, initialSort }: { columns: { id: string; 
         <thead>
           <tr>
             {columns.map((c) => (
-              <th key={c.id} className={c.right ? "text-right" : undefined}>
+              <th scope="col" key={c.id} className={c.right ? "text-right" : undefined}>
                 <button type="button" onClick={() => setSort({ id: c.id, dir: sort.id === c.id ? ((-sort.dir) as 1 | -1) : -1 })}>
                   {c.metricId ? <MetricLabel id={c.metricId}>{c.label}</MetricLabel> : c.label}
                   {sort.id === c.id ? (sort.dir === -1 ? " ↓" : " ↑") : ""}
@@ -362,15 +362,15 @@ export function Analytics() {
                       <table className="data-table w-full text-xs">
                         <thead>
                           <tr>
-                            <th>Оголошення</th>
-                            <th className="text-right">Покази</th>
-                            <th className="text-right">Link clicks</th>
-                            <th className="text-right">CTR</th>
-                            <th className="text-right">95% ДІ</th>
-                            <th className="text-right">p-value vs лідер</th>
-                            <th className="text-right">Конверсії</th>
-                            <th className="text-right">Cost/result</th>
-                            <th>Висновок</th>
+                            <th scope="col">Оголошення</th>
+                            <th scope="col" className="text-right">Покази</th>
+                            <th scope="col" className="text-right">Link clicks</th>
+                            <th scope="col" className="text-right">CTR</th>
+                            <th scope="col" className="text-right">95% ДІ</th>
+                            <th scope="col" className="text-right">p-value vs лідер</th>
+                            <th scope="col" className="text-right">Конверсії</th>
+                            <th scope="col" className="text-right">Cost/result</th>
+                            <th scope="col">Висновок</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -509,19 +509,19 @@ export function Analytics() {
                     <table className="data-table w-full text-xs">
                       <thead>
                         <tr>
-                          <th>День</th>
-                          <th className="text-right">Spend</th>
-                          <th className="text-right">Impr.</th>
-                          <th className="text-right">Reach</th>
-                          <th className="text-right">CPM</th>
-                          <th className="text-right">Link clicks</th>
-                          <th className="text-right">CTR</th>
-                          <th className="text-right">CPC</th>
-                          <th className="text-right">LPV</th>
-                          <th className="text-right">Leads</th>
-                          <th className="text-right">Purchases</th>
-                          <th className="text-right">Results</th>
-                          <th className="text-right">Cost/result</th>
+                          <th scope="col">День</th>
+                          <th scope="col" className="text-right">Spend</th>
+                          <th scope="col" className="text-right">Impr.</th>
+                          <th scope="col" className="text-right">Reach</th>
+                          <th scope="col" className="text-right">CPM</th>
+                          <th scope="col" className="text-right">Link clicks</th>
+                          <th scope="col" className="text-right">CTR</th>
+                          <th scope="col" className="text-right">CPC</th>
+                          <th scope="col" className="text-right">LPV</th>
+                          <th scope="col" className="text-right">Leads</th>
+                          <th scope="col" className="text-right">Purchases</th>
+                          <th scope="col" className="text-right">Results</th>
+                          <th scope="col" className="text-right">Cost/result</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -611,8 +611,8 @@ export function Analytics() {
                     <table className="data-table w-full text-xs">
                       <thead>
                         <tr>
-                          <th>KPI</th>
-                          <th>Ціль</th>
+                          <th scope="col">KPI</th>
+                          <th scope="col">Ціль</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -658,9 +658,9 @@ export function Analytics() {
                   <table className="data-table w-full text-xs">
                     <thead>
                       <tr>
-                        <th>Показник</th>
-                        <th className="text-right">Кабінет</th>
-                        <th className="text-right">CRM / бекенд</th>
+                        <th scope="col">Показник</th>
+                        <th scope="col" className="text-right">Кабінет</th>
+                        <th scope="col" className="text-right">CRM / бекенд</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -765,12 +765,12 @@ export function Analytics() {
                   <table className="data-table w-full text-xs">
                     <thead>
                       <tr>
-                        <th>Вікно</th>
-                        <th className="text-right">Leads</th>
-                        <th className="text-right">CPL</th>
-                        <th className="text-right">Purchases</th>
-                        <th className="text-right">CPA</th>
-                        <th className="text-right">ROAS</th>
+                        <th scope="col">Вікно</th>
+                        <th scope="col" className="text-right">Leads</th>
+                        <th scope="col" className="text-right">CPL</th>
+                        <th scope="col" className="text-right">Purchases</th>
+                        <th scope="col" className="text-right">CPA</th>
+                        <th scope="col" className="text-right">ROAS</th>
                       </tr>
                     </thead>
                     <tbody>

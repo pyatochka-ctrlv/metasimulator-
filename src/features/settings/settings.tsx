@@ -210,12 +210,12 @@ export function Settings() {
             <table className="data-table w-full text-xs">
               <thead>
                 <tr>
-                  <th>Акаунт</th>
-                  <th>Тип</th>
-                  <th className="text-right">Кампаній</th>
-                  <th className="text-right">Днів</th>
-                  <th className="text-right">Рядків метрик</th>
-                  <th />
+                  <th scope="col">Акаунт</th>
+                  <th scope="col">Тип</th>
+                  <th scope="col" className="text-right">Кампаній</th>
+                  <th scope="col" className="text-right">Днів</th>
+                  <th scope="col" className="text-right">Рядків метрик</th>
+                  <th scope="col" />
                 </tr>
               </thead>
               <tbody>
@@ -263,12 +263,12 @@ export function Settings() {
               <table className="data-table w-full text-xs">
                 <thead>
                   <tr>
-                    <th>feature_name</th>
-                    <th>supported_objectives</th>
-                    <th>availability_status</th>
-                    <th>region</th>
-                    <th>verified_at</th>
-                    <th>source_url</th>
+                    <th scope="col">feature_name</th>
+                    <th scope="col">supported_objectives</th>
+                    <th scope="col">availability_status</th>
+                    <th scope="col">region</th>
+                    <th scope="col">verified_at</th>
+                    <th scope="col">source_url</th>
                   </tr>
                 </thead>
                 <tbody>

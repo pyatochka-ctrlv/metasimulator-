@@ -130,15 +130,15 @@ function BreakdownRows({ account, row, mode, colSpan }: { account: AdAccount; ro
           <table className="data-table ml-10 w-[calc(100%-2.5rem)] text-xs">
             <thead>
               <tr>
-                <th>День</th>
-                <th className="text-right">Spend</th>
-                <th className="text-right">Impr.</th>
-                <th className="text-right">CPM</th>
-                <th className="text-right">Link clicks</th>
-                <th className="text-right">CTR</th>
-                <th className="text-right">LPV</th>
-                <th className="text-right">Results</th>
-                <th className="text-right">Cost/result</th>
+                <th scope="col">День</th>
+                <th scope="col" className="text-right">Spend</th>
+                <th scope="col" className="text-right">Impr.</th>
+                <th scope="col" className="text-right">CPM</th>
+                <th scope="col" className="text-right">Link clicks</th>
+                <th scope="col" className="text-right">CTR</th>
+                <th scope="col" className="text-right">LPV</th>
+                <th scope="col" className="text-right">Results</th>
+                <th scope="col" className="text-right">Cost/result</th>
               </tr>
             </thead>
             <tbody>
@@ -186,15 +186,15 @@ function BreakdownRows({ account, row, mode, colSpan }: { account: AdAccount; ro
         <table className="data-table ml-10 w-[calc(100%-2.5rem)] text-xs">
           <thead>
             <tr>
-              <th>Плейсмент</th>
-              <th className="text-right">Spend</th>
-              <th className="text-right">Impr.</th>
-              <th className="text-right">CPM</th>
-              <th className="text-right">Link clicks</th>
-              <th className="text-right">CTR</th>
-              <th className="text-right">LPV</th>
-              <th className="text-right">LPV rate</th>
-              <th className="text-right">Конверсії (сайт)</th>
+              <th scope="col">Плейсмент</th>
+              <th scope="col" className="text-right">Spend</th>
+              <th scope="col" className="text-right">Impr.</th>
+              <th scope="col" className="text-right">CPM</th>
+              <th scope="col" className="text-right">Link clicks</th>
+              <th scope="col" className="text-right">CTR</th>
+              <th scope="col" className="text-right">LPV</th>
+              <th scope="col" className="text-right">LPV rate</th>
+              <th scope="col" className="text-right">Конверсії (сайт)</th>
             </tr>
           </thead>
           <tbody>
@@ -542,19 +542,19 @@ export function AdsManager() {
           <table className="data-table w-full min-w-[900px]" aria-label={LEVEL_LABEL[level]}>
             <thead>
               <tr>
-                <th className="w-8">
+                <th scope="col" className="w-8">
                   <Checkbox checked={allSelected ? true : sel.size ? "indeterminate" : false} onCheckedChange={(v) => setSelected({ ...selected, [level]: v ? new Set(rows.map((r) => r.entity.id)) : new Set() })} aria-label="Вибрати всі" />
                 </th>
-                <th className="w-12">On/Off</th>
-                <th>
+                <th scope="col" className="w-12">On/Off</th>
+                <th scope="col">
                   <button type="button" className="flex items-center gap-1" onClick={() => setSort(sort?.col === "name" && sort.dir === "asc" ? { col: "name", dir: "desc" } : { col: "name", dir: "asc" })}>
                     {level === "campaign" ? "Campaign" : level === "ad_set" ? "Ad set" : "Ad"}
                     {sort?.col === "name" && (sort.dir === "asc" ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />)}
                   </button>
                 </th>
-                <th>Delivery</th>
+                <th scope="col">Delivery</th>
                 {visibleCols.map((c) => (
-                  <th key={c.id} className={cn(c.align === "right" && "text-right")}>
+                  <th scope="col" key={c.id} className={cn(c.align === "right" && "text-right")}>
                     <button
                       type="button"
                       className={cn("inline-flex items-center gap-1", c.align === "right" && "flex-row-reverse")}
