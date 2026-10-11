@@ -15,7 +15,7 @@ import type {
 import { seededId } from "@/lib/ids";
 import { reachFromImpressions } from "./audience";
 import { advanceLearning } from "./learning";
-import { buildAdSetModel, eventKind, LEAD_EVENTS, urlIsFunctional, type AdSetModel } from "./model";
+import { buildAdSetModel, eventKind, instantFormCompletion, instantFormQualityFactor, LEAD_EVENTS, LOAD_SPEED, urlIsFunctional, type AdSetModel } from "./model";
 import { reviewAd, reviewOutcome } from "./review";
 import { createRng, type Rng } from "./rng";
 import { captureModel, consentFactor, utmPresent } from "./tracking";
@@ -26,7 +26,6 @@ import { round } from "./metrics";
  * Детермінованість: усі випадкові величини походять із createRng(account.seed, seq сутності, день, мета).
  */
 
-const LOAD_SPEED = { fast: 0.9, average: 0.8, slow: 0.55 } as const;
 export const LEAD_LAG = [0.7, 0.15, 0.07, 0.04, 0.02, 0.01, 0.01];
 export const PURCHASE_LAG: Record<string, number[]> = {
   ecommerce: [0.55, 0.18, 0.1, 0.07, 0.05, 0.03, 0.02],
@@ -70,7 +69,6 @@ function splitByLag(rng: Rng, total: number, lag: number[]): number[] {
 }
 
 function placementSlices(
-  ad: Ad,
   model: AdSetModel,
   totals: { impressions: number; spend: number; linkClicks: number; lpv: number; conversions: number },
 ): Partial<Record<PlacementId, PlacementSlice>> {
@@ -89,7 +87,6 @@ function placementSlices(
       conversions: Math.round((totals.conversions * share * p.ctr * p.lpvQuality) / lpvW),
     };
   }
-  void ad;
   return out;
 }
 
@@ -152,7 +149,7 @@ function simulateAdSetDay(
   const bid = bidDeliveryFactor(campaign, adSet, model);
   if (bid.note) notes.push(`${adSet.name}: ${bid.note}`);
   const pacing = Math.min(1, Math.max(0.9, rng.normal(0.97, 0.02)));
-  const targetSpend = budget * pacing * bid.factor;
+  const targetSpend = budget * pacing * bid.factor * model.policyDeliveryFactor;
   const inventorySpend = (model.maxDailyImpressions * cpm) / 1000;
   let spend = Math.min(targetSpend, inventorySpend, Math.max(0, accountBudgetLeft));
   if (inventorySpend < targetSpend * 0.8) notes.push(`${adSet.name}: аудиторія замала для бюджету — доставка обмежена інвентарем.`);
@@ -224,7 +221,7 @@ function simulateAdSetDay(
     const trueWebsiteLeads = primary === "lead" ? siteConv : 0;
     const truePurchasesClick = primary === "purchase" ? siteConv : 0;
     const form = ad.creative.instantForm;
-    const completion = form?.formType === "higher_intent" ? 0.15 : 0.24;
+    const completion = instantFormCompletion(form);
     const instantLeads =
       instantShare > 0
         ? r.binomial(Math.round(linkClicks * instantShare), completion * (0.85 + 0.3 * model.audience.intent) * (adSet.performanceGoal === "conversion_leads" ? 0.9 : 1))
@@ -274,7 +271,8 @@ function simulateAdSetDay(
       am.assessment.leadQualityMultiplier *
       (adSet.performanceGoal === "conversion_leads" && account.tracking.crmFeedback ? 1.35 : 1) *
       (model.alignment < 0.5 ? 0.85 : 1) *
-      (form?.hasQualifyingQuestion ? 1.15 : 1);
+      (form?.hasQualifyingQuestion ? 1.15 : 1) *
+      (instantLeads > 0 ? 1 + (instantFormQualityFactor(form) - 1) * (instantLeads / Math.max(1, trueLeads)) : 1);
     const qualifiedLeads = r.binomial(trueLeads, Math.min(0.9, Math.max(0.03, qualRate)));
     const utm = utmPresent(ad.creative.urlParameters, ad.creative.destinationUrl);
     const crmAttributedLeads =
@@ -328,7 +326,7 @@ function simulateAdSetDay(
       byPlacement: {},
     };
     const conv = clickLeads.reduce((a, b) => a + b, 0) + clickPurchases.reduce((a, b) => a + b, 0);
-    row.byPlacement = placementSlices(ad, model, { impressions: imp, spend: adSpend, linkClicks, lpv: landingPageViews, conversions: conv });
+    row.byPlacement = placementSlices(model, { impressions: imp, spend: adSpend, linkClicks, lpv: landingPageViews, conversions: conv });
     rows.push(row);
   });
 
@@ -387,7 +385,7 @@ export function optimizationEventsRevealed(account: AdAccount, adSet: AdSet, new
       return sum((r) => r.clickLeads[0]);
   }
   // conversions / conversion_value: нові проявлені лаги для рядків з моменту останнього редагування
-  const kind = eventKind(adSet.optimizationEvent, account.landingPage.primaryConversion);
+  const kind = eventKind(adSet.optimizationEvent);
   const since = adSet.learning.lastSignificantEditDay ?? day;
   const window = adSet.attribution.clickWindowDays;
   let events = 0;

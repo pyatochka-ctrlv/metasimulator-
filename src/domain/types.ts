@@ -198,7 +198,6 @@ export interface Campaign {
   objective: Objective;
   status: EntityStatus;
   specialAdCategories: SpecialAdCategory[];
-  specialAdCountries: CountryCode[];
   setup: CampaignSetup;
   budgetLevel: BudgetLevel;
   /** Використовується, коли budgetLevel = "campaign" (Advantage+ campaign budget). */

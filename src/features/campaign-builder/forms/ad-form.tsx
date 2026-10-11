@@ -320,7 +320,7 @@ export function AdForm({
               )}
             />
             <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Кількість питань">
+              <Field label="Кількість питань" hint="Кожне питання понад 3 знижує частку заповнень (~5%), але трохи підвищує якість лідів.">
                 <Input type="number" min={1} max={10} {...register("formQuestions", { valueAsNumber: true })} />
               </Field>
               <Controller

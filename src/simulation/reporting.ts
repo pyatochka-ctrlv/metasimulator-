@@ -139,7 +139,7 @@ function resultForRow(account: AdAccount, row: DailyMetrics, adSet: AdSet | unde
       return row.appEvents;
     case "conversions":
     case "conversion_value": {
-      const kind = eventKind(adSet?.optimizationEvent ?? null, account.landingPage.primaryConversion);
+      const kind = eventKind(adSet?.optimizationEvent ?? null);
       if (kind === "purchase") return conv.purchases;
       if (kind === "lead") return conv.leads;
       if (kind === "mid") {

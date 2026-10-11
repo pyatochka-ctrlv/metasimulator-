@@ -58,7 +58,6 @@ export function makeCampaign(account: AdAccount, objective: Objective, partial: 
     objective,
     status: "draft",
     specialAdCategories: [],
-    specialAdCountries: [],
     setup: "manual",
     budgetLevel: "campaign",
     budgetType: "daily",

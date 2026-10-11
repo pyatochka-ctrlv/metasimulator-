@@ -1,7 +1,7 @@
 import { countryByCode, placementById, VERTICALS } from "@/domain/catalog";
 import { requiresPixelEvent } from "@/domain/objective-config";
 import { weekday } from "@/lib/dates";
-import type { AdAccount, Ad, AdSet, Campaign, PerformanceGoal, PixelEvent, PlacementId, SimDay } from "@/domain/types";
+import type { AdAccount, Ad, AdSet, Campaign, InstantFormConfig, PerformanceGoal, PixelEvent, PlacementId, SimDay } from "@/domain/types";
 import { estimateAudience, effectiveAudience, reachFromImpressions, type AudienceEstimate } from "./audience";
 import { assessCreative, assetFitForPlacement, selectedPlacements, type CreativeAssessment } from "./creative-quality";
 import { captureModel } from "./tracking";
@@ -57,11 +57,11 @@ const WEEKDAY_CPM = [0.96, 1.02, 1.0, 1.0, 1.02, 0.98, 0.95]; // Нд..Сб
 
 export const LEAD_EVENTS: PixelEvent[] = ["Lead", "CompleteRegistration", "Contact", "Schedule", "Subscribe", "StartTrial"];
 
-/** Яку бізнес-конверсію генерує сайт акаунта для цієї події. */
-export function eventKind(event: string | null, primary: ConversionKind): "lead" | "purchase" | "mid" | "none" {
+/** Тип конверсії, який означає подія оптимізації (ліди, покупки, проміжні кроки воронки). */
+export function eventKind(event: string | null): "lead" | "purchase" | "mid" | "none" {
   if (!event) return "none";
   if (event === "Purchase") return "purchase";
-  if (LEAD_EVENTS.includes(event as PixelEvent)) return primary === "lead" ? "lead" : "lead";
+  if (LEAD_EVENTS.includes(event as PixelEvent)) return "lead";
   if (event === "AddToCart" || event === "InitiateCheckout" || event === "ViewContent") return "mid";
   return "none";
 }
@@ -102,6 +102,21 @@ export function optimizationAlignment(adSet: AdSet, primary: ConversionKind, eve
     default:
       return 0.33;
   }
+}
+
+/**
+ * Частка тих, хто відкрив миттєву форму і надіслав її. Higher intent додає крок підтвердження;
+ * кожне питання понад 3 знижує заповнення (але підвищує якість — див. instantFormQualityFactor).
+ */
+export function instantFormCompletion(form: InstantFormConfig | null | undefined): number {
+  const base = form?.formType === "higher_intent" ? 0.15 : 0.24;
+  const extra = Math.max(0, (form?.questions ?? 3) - 3);
+  return base * Math.max(0.6, 1 - 0.05 * extra);
+}
+
+export function instantFormQualityFactor(form: InstantFormConfig | null | undefined): number {
+  const extra = Math.max(0, (form?.questions ?? 3) - 3);
+  return 1 + 0.04 * Math.min(5, extra);
 }
 
 export function learningProgress(adSet: AdSet): number {
@@ -256,10 +271,12 @@ export interface AdSetModel {
   expectedRoas: number | null;
   /** Максимум показів на день, доступний в аудиторії. */
   maxDailyImpressions: number;
+  /** Множник доставки через обмеження політик (чутливий таргетинг). */
+  policyDeliveryFactor: number;
   notes: string[];
 }
 
-const LOAD_SPEED = { fast: 0.9, average: 0.8, slow: 0.55 } as const;
+export const LOAD_SPEED = { fast: 0.9, average: 0.8, slow: 0.55 } as const;
 
 export function urlIsFunctional(account: AdAccount, url: string): boolean {
   try {
@@ -394,14 +411,14 @@ export function buildAdSetModel(account: AdAccount, campaign: Campaign, adSet: A
       break;
     case "leads":
     case "conversion_leads": {
-      const completion = adModels[0]?.ad.creative.instantForm?.formType === "higher_intent" ? 0.15 : 0.24;
+      const completion = instantFormCompletion(adModels[0]?.ad.creative.instantForm);
       resultsPerDollar = clicksPerDollar * completion * (g === "conversion_leads" ? 0.9 : 1);
       break;
     }
     case "conversions":
     case "conversion_value": {
       const cap = event ? captureModel(account, event).reportedRate : 0;
-      const kind = eventKind(event, primary);
+      const kind = eventKind(event);
       const perSession = kind === "mid" ? Math.min(0.6, sessionCvr * 4) : kind === primary ? sessionCvr : sessionCvr * 0.1;
       resultsPerDollar = sessionsPerDollar * perSession * cap;
       if (primary === "purchase") {
@@ -423,6 +440,9 @@ export function buildAdSetModel(account: AdAccount, campaign: Campaign, adSet: A
 
   if (!urlOk && ["website", "website_and_app", "website_and_instant_forms"].includes(adSet.conversionLocation)) notes.push("URL оголошень не веде на робочу посадкову сторінку.");
   if (market.labels.length) notes.push(`Подія ринку: ${market.labels.join(", ")}`);
+  // Навчальне припущення: чутливий таргетинг не відхиляє оголошення, але обмежує доставку.
+  const policyDeliveryFactor = audience.usesSensitiveTargeting ? 0.4 : 1;
+  if (policyDeliveryFactor < 1) notes.push("Чутливий інтерес у таргетингу: доставку обмежено політиками.");
 
   return {
     audience,
@@ -443,6 +463,7 @@ export function buildAdSetModel(account: AdAccount, campaign: Campaign, adSet: A
     costPerResult: resultsPerDollar > 0 ? 1 / resultsPerDollar : null,
     expectedRoas,
     maxDailyImpressions,
+    policyDeliveryFactor,
     notes,
   };
 }

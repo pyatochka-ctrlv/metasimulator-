@@ -1,6 +1,7 @@
 import { publishCampaign, updateAdSet, updateCampaign, updateTracking } from "@/domain/operations";
 import { simulateDays } from "@/simulation/engine";
 import { aggregate, ATTRIBUTION_PRESETS } from "@/simulation/reporting";
+import { instantFormCompletion, instantFormQualityFactor } from "@/simulation/model";
 import { freshLeadAccount, freshShopAccount, draftTree } from "../helpers";
 
 const NOW = "2026-10-11T10:00:00.000Z";
@@ -148,6 +149,30 @@ describe("simulation engine", () => {
     const after = simulateDays(tiny, 5, NOW).account;
     const spend = after.metrics.reduce((a, m) => a + m.spend, 0);
     expect(spend).toBeLessThanOrEqual(40.01);
+  });
+
+  it("sensitive interests are not rejected but limit delivery", () => {
+    const normal = launched(81);
+    const t = draftTree(freshLeadAccount(81));
+    const withSensitive = updateAdSet(t.account, t.adSet.id, {
+      audience: { ...t.adSet.audience, detailedTargeting: [...t.adSet.audience.detailedTargeting, "int_weight_loss"] },
+    });
+    const pub = publishCampaign(withSensitive, t.campaign.id);
+    expect(pub.published).toBe(true);
+    const spendOf = (a: typeof normal.account) => simulateDays(a, 3, NOW).account.metrics.reduce((x, m) => x + m.spend, 0);
+    const after = simulateDays(pub.account, 1, NOW).account;
+    expect(after.ads[0].status).toBe("active");
+    expect(after.ads[0].review?.reasons.some((r) => r.includes("чутливий"))).toBe(true);
+    expect(spendOf(pub.account)).toBeLessThan(spendOf(normal.account) * 0.6);
+  });
+
+  it("longer instant forms complete less often but yield better leads", () => {
+    const form = (questions: number) => ({ formType: "more_volume" as const, questions, privacyPolicyUrl: "https://x.example/p", hasQualifyingQuestion: false });
+    expect(instantFormCompletion(form(3))).toBeCloseTo(0.24);
+    expect(instantFormCompletion(form(7))).toBeLessThan(instantFormCompletion(form(3)));
+    expect(instantFormCompletion(form(10))).toBeGreaterThanOrEqual(0.24 * 0.6);
+    expect(instantFormQualityFactor(form(7))).toBeGreaterThan(instantFormQualityFactor(form(3)));
+    expect(instantFormCompletion({ ...form(3), formType: "higher_intent" })).toBeLessThan(instantFormCompletion(form(3)));
   });
 
   it("bid cap far below the market leads to under-delivery", () => {

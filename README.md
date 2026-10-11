@@ -35,7 +35,7 @@ npm run dev          # http://localhost:3000
 ```bash
 npm run typecheck    # TypeScript
 npm run lint         # ESLint (next lint)
-npm test             # 93 unit + інтеграційні тести (Vitest)
+npm test             # 95 unit + інтеграційних тестів (Vitest)
 npm run build        # production-збірка
 PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers npm run test:e2e   # 14 e2e-тестів (потрібна збірка)
 ```
