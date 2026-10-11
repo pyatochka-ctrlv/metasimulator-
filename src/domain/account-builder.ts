@@ -124,15 +124,15 @@ export function buildCampaign(account: AdAccount, spec: CampaignSpec): AdAccount
   campaign = { ...campaign, id: seededId("cmp", `${account.id}|${campaign.seq}`), status: launch ? "active" : "draft", publishedAt: launch ? nowIso() : undefined };
   acc = { ...acc, campaigns: [...acc.campaigns, campaign] };
   for (const s of spec.adSets) {
-    let [adSet, acc2] = makeAdSet(acc, campaign, { ...s.adSet });
-    adSet = { ...adSet, id: seededId("ads", `${account.id}|${adSet.seq}`), status: launch ? "active" : "draft" };
+    const [rawAdSet, acc2] = makeAdSet(acc, campaign, { ...s.adSet });
+    const adSet: AdSet = { ...rawAdSet, id: seededId("ads", `${account.id}|${rawAdSet.seq}`), status: launch ? "active" : "draft" };
     acc = { ...acc2, adSets: [...acc2.adSets, adSet] };
     for (const a of s.ads) {
       const creative: Creative = { ...defaultCreative(acc), ...a.creative };
-      let [ad, acc3] = makeAd(acc, adSet, { name: a.name, format: a.format ?? (creative.media[0]?.kind === "video" ? "single_video" : "single_image"), creative });
-      ad = {
-        ...ad,
-        id: seededId("ad", `${account.id}|${ad.seq}`),
+      const [rawAd, acc3] = makeAd(acc, adSet, { name: a.name, format: a.format ?? (creative.media[0]?.kind === "video" ? "single_video" : "single_image"), creative });
+      const ad: Ad = {
+        ...rawAd,
+        id: seededId("ad", `${account.id}|${rawAd.seq}`),
         status: a.status ?? (launch ? "active" : "draft"),
         review: launch ? { state: "approved", reasons: [], reviewedDay: acc.simDay } : null,
       };

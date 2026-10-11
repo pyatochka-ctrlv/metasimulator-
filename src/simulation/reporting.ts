@@ -222,7 +222,8 @@ export function aggregate(account: AdAccount, rows: DailyMetrics[], opts: Report
     trueRevenue += r.trueRevenue;
     crmLeads += r.crmAttributedLeads;
     crmPurchases += r.crmAttributedPurchases;
-    incomplete = incomplete || conv.incomplete;
+    const convGoal = adSet ? ["leads", "conversion_leads", "conversions", "conversion_value"].includes(adSet.performanceGoal) : false;
+    incomplete = incomplete || (convGoal && conv.incomplete);
     results += resultForRow(account, r, adSet, conv);
     labels.add(resultLabelFor(adSet));
     impressionsByAdSet.set(r.adSetId, (impressionsByAdSet.get(r.adSetId) ?? 0) + r.impressions);

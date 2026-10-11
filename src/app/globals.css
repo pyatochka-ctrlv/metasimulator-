@@ -38,6 +38,14 @@
     --chart-3: 32 90% 50%;
     --chart-4: 330 65% 52%;
     --chart-5: 200 80% 45%;
+    /* Категоріальна палітра графіків (валідована: CVD/normal-vision, light surface #fff) */
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --series-5: #e87ba4;
+    --viz-grid: #e7e8ec;
+    --viz-axis: #6b6f7a;
   }
 
   .dark {
@@ -74,6 +82,13 @@
     --chart-3: 36 92% 58%;
     --chart-4: 330 70% 64%;
     --chart-5: 200 85% 60%;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --viz-grid: #262a33;
+    --viz-axis: #9aa0ab;
   }
 
   * {

@@ -20,7 +20,6 @@ import {
   significantUserEdits,
   userAds,
   userReport,
-  type EvalContext,
 } from "@/scoring/checks";
 import { expensiveLeadScenario, fatigueScenario, glynaProspecting, lowCtrScenario } from "../scenarios";
 import { excelProAccount, glynaAccount, pixelPathAccount, speaklyAccount } from "./businesses";

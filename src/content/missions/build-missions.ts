@@ -22,8 +22,6 @@ import {
 import { excelProAccount, glynaAccount, pixelPathAccount, speaklyAccount, zernoAccount } from "./businesses";
 import type { MissionDefinition } from "./types";
 
-const confidenceNote = "Оберіть рівень впевненості: висока впевненість у хибній відповіді штрафується.";
-
 export const m01: MissionDefinition = {
   id: "m01",
   number: 1,
